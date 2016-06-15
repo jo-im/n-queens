@@ -180,12 +180,42 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow, row) {
+      var count = 0;
+      row = row || 0;
+ 
+      var start = minorDiagonalColumnIndexAtFirstRow; //2
+
+      for (row; row < this.get('n'); row++) { 
+        if (this.get(row)[start] === 1) {
+          count++;
+        }//i is 0; n is 3
+        if (count > 1) {
+          return true;
+        } else {
+          if (start < 0) {
+            return false;
+          }
+        }
+        start--;
+      }
     },
+
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      for (var i = 0; i < this.get('n'); i++) {
+        for (var x = 0; x < this.get('n'); x++) {
+          if (this.hasMinorDiagonalConflictAt(x, i)) {
+            return true;
+          }
+        }
+      }
+      return false;
+
+
+
+
       return false; // fixme
     }
 
