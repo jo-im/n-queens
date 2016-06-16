@@ -80,23 +80,21 @@
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
       var count = 0;
-      if (this.get(rowIndex)) {
-        for (var i = 0; i < this.get(rowIndex).length; i++) {
-          if (count > 1) {
-            return true;
-          }
-          if (this.get(rowIndex)[i] === 1) {
-            count++;
-          }
+      for (var i = 0; i < this.get('n'); i++) {
+        if (this.get(rowIndex)[i] === 1) {
+          count++;
+        }
+        if (count > 1) {
+          return true;
         }
       }
+      
       return false; // fixme
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      var rowLength = this.get('n');
-      for (var i = 0; i < rowLength; i++) {
+      for (var i = 0; i < this.get('n'); i++) {
         if (this.hasRowConflictAt(i)) {
           return true;
         }
@@ -113,11 +111,11 @@
     hasColConflictAt: function(colIndex) {
       var count = 0;
       for (var i = 0; i < this.get('n'); i++) {
-        if (count > 1) {
-          return true;
-        }
         if (this.get(i)[colIndex] === 1) {
           count++;
+        }
+        if (count > 1) {
+          return true;
         }
       }
       return false; // fixme
