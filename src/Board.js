@@ -201,7 +201,7 @@
       }
     },
 
-
+ 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
       for (var i = 0; i < this.get('n'); i++) {
