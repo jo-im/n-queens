@@ -40,22 +40,36 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
 
-  function helper (board, row) { //row is at 2
+  function helper (board, row, rookArray) {
+    //board will be the board argument you give, or a new board on first call
     board = board || new Board({n: n});
+    //row will be the row arg you give, or be set to 0 (this first row)
     row = row || 0; //2
+    //rookArray holds all indexes of existing rooks. on first call, the array will be empty
+    rookArray = rookArray || [];
+    //loop through n!
     for (var i = 0; i < n; i++) {
-      //rook
-      board.get(row)[i] = 1;
-
-      if (row === (n - 1)) {
-        if (!(board.hasAnyRooksConflicts())) {
+      //if 'i' is inside of rookArray, then the rook can't be on that column
+      if (rookArray.indexOf(i) === -1) {
+        //if the rook is not on that column, continue! you slice the existing rookArray, so he can go along the recursion
+        var rookIndex = rookArray.slice();
+        //set your rook
+        board.get(row)[i] = 1;
+        //add the column index to your currently tracking rookArray (which is now rookIndex)
+        rookIndex.push(i);
+        //if row === n-1, that means you are done
+        if (row === (n - 1)) {
           solutionCount++;
+        } else {
+          //if the board hasn't completed recursion (as in, its row !=== n-1, that means it still has more rows to complete)
+            //create a new board that represents the board you want to "copy", since in memory stuff will cause issues.
+          var newBoard = new Board(board.rows());
+          //call recursion
+          helper(newBoard, row + 1, rookIndex);
         }
-      } else {
-        var newBoard = new Board(board.rows());
-        helper(newBoard, row + 1);
+        //toggle off your rook so he won't impact future recursion calls;
+        board.get(row)[i] = 0;
       }
-      board.get(row)[i] = 0;
     }
   }
   helper();
@@ -65,15 +79,120 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  // var solution = undefined; //fixme
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  // return solution;
+
+  if (n === 0) {
+    var newBoard = new Board([]);
+    return newBoard.rows();
+  }
+  if (n === 1) {
+    return [[1]];
+  }
+  var solution = helper();
+
+  function helper (board, row, rookArray) {
+    //board will be the board argument you give, or a new board on first call
+    board = board || new Board({n: n});
+    //row will be the row arg you give, or be set to 0 (this first row)
+    row = row || 0; //2
+    //rookArray holds all indexes of existing rooks. on first call, the array will be empty
+    rookArray = rookArray || [];
+    //loop through n!
+    for (var i = 0; i < n; i++) {
+      //if 'i' is inside of rookArray, then the rook can't be on that column
+      if (rookArray.indexOf(i) === -1) {
+        //if the rook is not on that column, continue! you slice the existing rookArray, so he can go along the recursion
+        var rookIndex = rookArray.slice();
+        //set your rook
+        board.get(row)[i] = 1;
+        //add the column index to your currently tracking rookArray (which is now rookIndex)
+        rookIndex.push(i);
+        //if row === n-1, that means you are done
+        console.log('row is', row);
+        console.log('n is', n);
+        if (row === (n - 1)) {
+          // return (!board.hasAnyQueensConflicts());
+          console.log('reached the last row and board is', board);
+          if (!board.hasAnyQueensConflicts()) {
+            console.log('Returning a board without queens conflicts!');
+            return board;
+          }
+          // if (!board.hasAnyQueensConflicts()) {
+          //   return board;
+          // } else {
+
+          // }
+        } else {
+          //if the board hasn't completed recursion (as in, its row !=== n-1, that means it still has more rows to complete)
+            //create a new board that represents the board you want to "copy", since in memory stuff will cause issues.
+          var newBoard = new Board(board.rows());
+          //call recursion
+          var run = helper(newBoard, row + 1, rookIndex);
+          if (run) {
+            return run;
+          }
+          //   run = helper(newBoard, row + 1, rookIndex);
+          // } else {
+          //   if (!run.hasAnyQueensConflicts()) {
+          //     return run;
+          //   }
+          // }
+
+        }
+        //toggle off your rook so he won't impact future recursion calls;
+        board.get(row)[i] = 0;
+      }
+    }
+    return;
+  }
+  return solution.rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+  if (n === 0) {
+    return 1;
+  }
+
+  function helper (board, row, rookArray) {
+    //board will be the board argument you give, or a new board on first call
+    board = board || new Board({n: n});
+    //row will be the row arg you give, or be set to 0 (this first row)
+    row = row || 0; //2
+    //rookArray holds all indexes of existing rooks. on first call, the array will be empty
+    rookArray = rookArray || [];
+    //loop through n!
+    for (var i = 0; i < n; i++) {
+      //if 'i' is inside of rookArray, then the rook can't be on that column
+      if (rookArray.indexOf(i) === -1) {
+        //if the rook is not on that column, continue! you slice the existing rookArray, so he can go along the recursion
+        var rookIndex = rookArray.slice();
+        //set your rook
+        board.get(row)[i] = 1;
+        //add the column index to your currently tracking rookArray (which is now rookIndex)
+        rookIndex.push(i);
+        //if row === n-1, that means you are done
+        if (row === (n - 1)) {
+          if (!board.hasAnyQueensConflicts()) {
+            solutionCount++;
+          }
+        } else {
+          //if the board hasn't completed recursion (as in, its row !=== n-1, that means it still has more rows to complete)
+            //create a new board that represents the board you want to "copy", since in memory stuff will cause issues.
+          var newBoard = new Board(board.rows());
+          //call recursion
+          helper(newBoard, row + 1, rookIndex);
+        }
+        //toggle off your rook so he won't impact future recursion calls;
+        board.get(row)[i] = 0;
+      }
+    }
+  }
+  helper();
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
